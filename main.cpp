@@ -1,19 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct DonThuc {
+    int CoSo;
+    int SoMu;
+}DonThuc;
 typedef struct Node {
-    int info;
+    DonThuc info;
     struct Node *pNext;
 }NODE;
 typedef NODE* NODEPTR;
+void Input(DonThuc &dt) {
+    scanf("%d%d", &dt.CoSo, &dt.SoMu);
+}
+void Output(DonThuc dt) {
+    printf("(%d)x^%d+", dt.CoSo,dt.SoMu);
+}
 
-NODEPTR createNode(int input) {
+NODEPTR createNode(DonThuc input) {
     NODEPTR newNode = new NODE;
     newNode->info = input;
     newNode->pNext = NULL;
     return newNode;
 }
-void Insert(NODEPTR &pHead, int input) {
+void Insert(NODEPTR &pHead, DonThuc input) {
     if (pHead == NULL) {
         pHead = createNode(input);
         return;
@@ -25,16 +35,22 @@ void Insert(NODEPTR &pHead, int input) {
 void Print(NODEPTR pHead) {
     NODEPTR curret = pHead;
     for (; curret!=NULL; curret=curret->pNext) {
-        printf("%d\t", curret->info);
+        Output(curret->info);
     }
 }
 int main() {
     NODEPTR pHead = NULL;
-    Insert(pHead, 1);
-    Insert(pHead, 2);
-    Insert(pHead, 3);
-    Insert(pHead, 4);
-    Insert(pHead, 5);
+    for (int i = 0; i < 5; ++i) {
+        DonThuc dt;
+        if(i%2==0) {
+            dt.SoMu = i;
+            dt.CoSo = i;
+        }else {
+            dt.SoMu = i;
+            dt.CoSo = i*-1;
+        }
+        Insert(pHead, dt);
+    }
     Print(pHead);
     return 0;
 }
