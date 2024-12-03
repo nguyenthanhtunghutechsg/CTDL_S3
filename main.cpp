@@ -1,3 +1,4 @@
+#include <future>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -6,7 +7,6 @@ typedef struct Node {
     struct Node *pNext;
 }NODE;
 typedef NODE* NODEPTR;
-
 NODEPTR createNode(int input) {
     NODEPTR newNode = new NODE;
     newNode->info = input;
@@ -24,8 +24,9 @@ void Insert(NODEPTR &pHead, int input) {
 }
 
 void InsertTail(NODEPTR &pHead, int input) {
-    if(pHead == NULL) {
+    if (pHead == NULL) {
         Insert(pHead, input);
+        return;
     }
     NODEPTR current = pHead;
     while (current->pNext != NULL) {
@@ -34,37 +35,40 @@ void InsertTail(NODEPTR &pHead, int input) {
     current->pNext = createNode(input);
 }
 
-void InsertPositionK(NODEPTR &pHead, int input,
-    int position) {
-    if (pHead == NULL) {
-        Insert(pHead, input);
-        return;
-    }
+NODEPTR GetNode(NODEPTR pHead, int k) {
     NODEPTR current = pHead;
-    int i = 0;
-    while (i < position && current->pNext != NULL) {
+    int i = 1;
+    while (current != NULL&&i<=k) {
         current = current->pNext;
+        i++;
     }
-    if(i<position) {
-        InsertTail(pHead, input);
+    if (i<k) {
+        return NULL;
+    }
+    return current;
+}
+void InsertPositionK(NODEPTR &pHead, int input, int k) {
+    NODEPTR current = GetNode(pHead, k);
+    if(current==NULL) {
         return;
     }
+
     NODEPTR newNode = createNode(input);
     newNode->pNext = current->pNext;
     current->pNext = newNode;
 }
 void RemoveHead(NODEPTR &pHead) {
-    if (pHead == NULL||pHead->pNext == NULL) {
-        pHead = NULL;
+    if (pHead==NULL||pHead->pNext == NULL) {
+        pHead==NULL;
         return;
     }
-    NODEPTR current = pHead;
+    NODEPTR temp = pHead;
     pHead = pHead->pNext;
-    delete current;
+    delete temp;
 }
 void RemoveTail(NODEPTR &pHead) {
-    if (pHead == NULL||pHead->pNext == NULL) {
-        pHead = NULL;
+    if (pHead==NULL||pHead->pNext == NULL) {
+        pHead==NULL;
         return;
     }
     NODEPTR current = pHead;
@@ -73,11 +77,28 @@ void RemoveTail(NODEPTR &pHead) {
     }
     current->pNext = NULL;
 }
-//
+
+void Print(NODEPTR pHead) {
+    NODEPTR curret = pHead;
+    for (; curret!=NULL; curret=curret->pNext) {
+        printf("%d ", curret->info);
+    }
+}
+void RemovePositionK(NODEPTR &pHead, int k) {
+    if (k==0) {
+        RemoveHead(pHead);
+        return;
+    }
+    NODEPTR current = GetNode(pHead, k-1);
+    if (current==NULL) {
+        return;
+    }
+    current->pNext = current->pNext->pNext;
+}
 void Sort(NODEPTR &pHead) {
-    for (NODEPTR i = pHead; i->pNext!=NULL; i=i->pNext) {
+    for (NODEPTR i = pHead; i ->pNext!=NULL; i=i->pNext) {
         for (NODEPTR j = i->pNext; j!=NULL; j=j->pNext) {
-            if(i->info > j->info) {
+            if(i->info<j->info) {
                 int temp = j->info;
                 j->info = i->info;
                 i->info = temp;
@@ -85,21 +106,26 @@ void Sort(NODEPTR &pHead) {
         }
     }
 }
-
-void Print(NODEPTR pHead) {
-    NODEPTR curret = pHead;
-    for (; curret!=NULL; curret=curret->pNext) {
-        printf("%d\t", curret->info);
-    }
-}
-
 int main() {
     NODEPTR pHead = NULL;
-    Insert(pHead, 1);
-    Insert(pHead, 2);
-    Insert(pHead, 3);
-    Insert(pHead, 4);
-    Insert(pHead, 5);
+    for (int i = 0; i < 10; i++) {
+        InsertTail(pHead, i);
+    }
+    Print(pHead);
+    printf("\n");
+    InsertPositionK(pHead, 10, 4);
+    Print(pHead);
+    printf("\n");
+    RemoveHead(pHead);
+    Print(pHead);
+    printf("\n");
+    RemoveTail(pHead);
+    Print(pHead);
+    printf("\n");
+    RemovePositionK(pHead,4);
+    Print(pHead);
+    printf("\n");
+    Sort(pHead);
     Print(pHead);
     return 0;
 }
